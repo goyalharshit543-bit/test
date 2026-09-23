@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets & local data
+.env
+data/
+*.db
+
+# Firmware build output
+firmware/build/
+
+# Misc
+server.log
+server.pid
+.vscode-ipynb/
+.DS_Store

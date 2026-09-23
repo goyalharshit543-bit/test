@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyCart · Command Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛸</text></svg>" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+<div class="app">
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="brand">🛸 <span>SkyCart</span></div>
+    <nav id="nav">
+      <a data-section="map" class="active">🗺️ <span>Live Map</span></a>
+      <a data-section="orders">📦 <span>Orders</span></a>
+      <a data-section="drones">🚁 <span>Drones</span></a>
+      <a data-section="users" class="admin-only hidden">👥 <span>Users</span></a>
+      <a data-section="chat">🤖 <span>AI Assistant</span></a>
+    </nav>
+    <div class="side-footer">
+      <div id="side-user" class="side-user"></div>
+      <button id="btn-logout" class="btn ghost small">Log out</button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- ── Live map ───────────────────────────────────────── -->
+    <section id="section-map" class="section active">
+      <header class="topbar">
+        <h1>Live Tracking</h1>
+        <div class="toolbar">
+          <span id="sim-note" class="chip"></span>
+          <button id="btn-recenter" class="btn ghost">Recenter</button>
+          <button id="btn-create-order" class="btn primary">＋ New Order</button>
+        </div>
+      </header>
+      <div id="map"></div>
+      <div id="map-legend" class="legend">
+        <span><i class="dot" style="background:#3b82f6"></i>Flying</span>
+        <span><i class="dot" style="background:#22c55e"></i>Idle</span>
+        <span><i class="dot" style="background:#f59e0b"></i>Charging</span>
+        <span><i class="dot" style="background:#f97316"></i>Returning</span>
+        <span><i class="dot" style="background:#06b6d4"></i>Delivering</span>
+        <span><i class="dot" style="background:#ef4444"></i>Destination</span>
+      </div>
+    </section>
+
+    <!-- ── Orders ─────────────────────────────────────────── -->
+    <section id="section-orders" class="section">
+      <header class="topbar">
+        <h1>Orders</h1>
+        <div class="toolbar">
+          <button id="btn-create-order-2" class="btn primary">＋ New Order</button>
+        </div>
+      </header>
+      <div class="scroll-area">
+        <table class="table" id="orders-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Item</th><th>Customer</th><th>Phone</th>
+              <th>Address</th><th>Drone</th><th>Status</th>
+              <th>Distance</th><th>ETA</th><th>Created</th><th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Drones ─────────────────────────────────────────── -->
+    <section id="section-drones" class="section">
+      <header class="topbar">
+        <h1>Drone Fleet</h1>
+        <div class="toolbar">
+          <button id="btn-add-drone" class="btn primary admin-only hidden">＋ Add Drone</button>
+        </div>
+      </header>
+      <div class="scroll-area"><div id="drone-cards" class="cards"></div></div>
+    </section>
+
+    <!-- ── Users (admin) ──────────────────────────────────── -->
+    <section id="section-users" class="section">
+      <header class="topbar">
+        <h1>Users &amp; Access</h1>
+        <div class="toolbar">
+          <button id="btn-add-user" class="btn primary">＋ Grant Shopkeeper Access</button>
+        </div>
+      </header>
+      <div class="scroll-area">
+        <table class="table" id="users-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Email</th><th>Role</th>
+                <th>Shop</th><th>Status</th><th>Created</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── AI chat ────────────────────────────────────────── -->
+    <section id="section-chat" class="section">
+      <header class="topbar">
+        <h1>SkyBot — AI Assistant <span id="ai-engine" class="chip"></span></h1>
+      </header>
+      <div class="chat-wrap">
+        <div id="chat-log"></div>
+        <div class="chat-suggest">
+          <button class="suggestion">Where is drone 1?</button>
+          <button class="suggestion">Show recent orders</button>
+          <button class="suggestion">How many drones are free?</button>
+        </div>
+        <form id="chat-form">
+          <input id="chat-input" placeholder="Ask SkyBot anything about your deliveries…"
+                 autocomplete="off" />
+          <button class="btn primary" type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ── New Order modal ──────────────────────────────────── -->
+<div id="modal-order" class="modal hidden">
+  <div class="modal-card">
+    <h2>📦 New Delivery Order</h2>
+    <p class="hint">Type a place name and pick a suggestion — or just click the map. Coordinates are filled automatically.</p>
+    <form id="order-form">
+      <label>Item / package</label>
+      <input name="item" required placeholder="e.g. 1kg grocery pack" />
+      <div class="row2">
+        <div><label>Customer name</label>
+          <input name="customer_name" required placeholder="Full name" /></div>
+        <div><label>Phone</label>
+          <input name="customer_phone" placeholder="Phone (optional)" /></div>
+      </div>
+      <label>Drop location — place name or map click</label>
+      <div class="place-wrap">
+        <input name="place" id="place-in" autocomplete="off"
+               placeholder="e.g. Indiranagar, Bengaluru — or click the map →" />
+        <div id="place-suggestions" class="place-suggestions hidden"></div>
+      </div>
+      <label>Address note (optional)</label>
+      <input name="address" placeholder="e.g. Flat 402, Green Residency" />
+      <div class="row2">
+        <div><label>Latitude (auto)</label>
+          <input name="lat" id="lat-in" readonly placeholder="from place / map" /></div>
+        <div><label>Longitude (auto)</label>
+          <input name="lng" id="lng-in" readonly placeholder="from place / map" /></div>
+      </div>
+      <div id="place-chosen" class="place-chosen hidden"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Create &amp; Dispatch 🚀</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Add user modal ───────────────────────────────────── -->
+<div id="modal-user" class="modal hidden">
+  <div class="modal-card">
+    <h2>👥 Grant Access</h2>
+    <form id="user-form">
+      <label>Full name</label>
+      <input name="name" required placeholder="Shopkeeper name" />
+      <label>Email</label>
+      <input name="email" type="email" required placeholder="shop@example.com" />
+      <label>Password</label>
+      <input name="password" type="text" required minlength="6" placeholder="min 6 characters" />
+      <div class="row2">
+        <div><label>Role</label>
+          <select name="role">
+            <option value="shopkeeper" selected>Shopkeeper</option>
+            <option value="admin">Admin</option>
+          </select></div>
+        <div><label>Shop name</label>
+          <input name="shop_name" placeholder="Their shop (optional)" /></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Create account</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Add drone modal ──────────────────────────────────── -->
+<div id="modal-drone" class="modal hidden">
+  <div class="modal-card">
+    <h2>🚁 Add Drone</h2>
+    <form id="drone-form">
+      <label>Name</label>
+      <input name="name" required placeholder="DRONE-4" />
+      <label>Model</label>
+      <input name="model" placeholder="SkyCart X1-Pro" />
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Add to fleet</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

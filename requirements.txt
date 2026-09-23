@@ -1,0 +1,15 @@
+# ── Core backend ─────────────────────────────────────────────
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.29
+pydantic>=2.6
+PyJWT>=2.8
+python-dotenv>=1.0
+
+# ── AI assistant (LangChain) ─────────────────────────────────
+# Optional: if these fail to install, or you configure no AI
+# provider in .env, the app automatically falls back to the
+# built-in rule-based assistant. Everything else keeps working.
+langchain-core>=0.3
+langchain-google-genai>=2.0
+langchain-openai>=0.2
+langchain-ollama>=0.2

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyCart · Sign in</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛸</text></svg>" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="login-logo">🛸</div>
+    <h1>SkyCart <span>Drone Delivery</span></h1>
+    <p class="login-sub">AI-powered autonomous deliveries · Command Center</p>
+
+    <form id="login-form" autocomplete="on">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@skycart.com" required />
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="••••••••" required />
+
+      <div id="login-error" class="login-error hidden"></div>
+
+      <button type="submit" class="btn primary block" id="login-btn">Sign in</button>
+    </form>
+
+    <div class="demo-box">
+      <strong>Demo accounts</strong>
+      <button class="demo-cred" data-email="admin@skycart.com" data-password="admin123">
+        👑 Admin — admin@skycart.com / admin123
+      </button>
+      <button class="demo-cred" data-email="shop@skycart.com" data-password="shop123">
+        🏪 Shopkeeper — shop@skycart.com / shop123
+      </button>
+    </div>
+
+    <p class="login-foot">Backend must be running → <code>python -m backend.main</code></p>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/login.js"></script>
+</body>
+</html>
